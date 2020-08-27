@@ -8,9 +8,8 @@ import pytorch_lightning as pl
 class SVHNDataModule(pl.LightningDataModule):
     def __init__(self,batch_size=64):
         super().__init__()
-        
-        self.mean = [0.5050, 0.4847, 0.4390]
-        self.std = [0.2674, 0.2554, 0.275]
+        self.mean = [129.3/255, 124.1/255, 112.4/255]
+        self.std = [68.2/255, 65.4/255.0, 70.4/255.0]
         
         self.transform = transforms.Compose([transforms.RandomCrop(32,padding=4),
                                             transforms.RandomHorizontalFlip(),
