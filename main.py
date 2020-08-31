@@ -21,8 +21,8 @@ parser.add_argument('--in_dataset', default='CIFAR10',type=str, choices=['CIFAR1
 parser.add_argument('--out_dataset', default='CIFAR100', type=str, choices=['LSUN','LSUN_resize','Imagenet','Uniform','Gaussian','SVHN','MNIST_M'],
                     help='out-of-distribution dataset')
 parser.add_argument('--nn', default="Densenet", type=str,
-                    choices=['VGG','Resnet','WideResnet','Densenet'], help='neural network name and training set')
-parser.add_argument('--magnitude', default=0.0003, type=float,
+                    choices=['VGG','Resnet','WideResnet','Densenet','Densenet_BC'], help='neural network name and training set')
+parser.add_argument('--magnitude', default=0.0014, type=float,
                     help='perturbation magnitude')
 parser.add_argument('--temperature', default=1000, type=int,
                     help='temperature scaling')

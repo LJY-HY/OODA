@@ -24,6 +24,7 @@ import torchvision.transforms as transforms
 import numpy as np
 import time
 from scipy import misc
+import pdb
 
 def tpr95(name):
     #calculate the falsepositive error when tpr is 95%
@@ -73,8 +74,8 @@ def tpr95(name):
         if tpr <= 0.9505 and tpr >= 0.9495:
             fpr += error2
             total += 1
-            print(delta)
-    fprNew = fpr/total         
+ 
+    fprNew = fpr/total    
     return fprBase, fprNew
 
 def auroc(name):
@@ -291,12 +292,12 @@ def detection(name):
 
 
 
-def metric(nn, data):
-    if nn == "CIFAR10_Densenet" or nn == "CIFAR10_Wideresnet": indis = "CIFAR-10"
-    if nn == "CIFAR100_Densenet" or nn == "CIFAR100_Wideresnet": indis = "CIFAR-100"
-    if nn == "CIFAR10_Densenet" or nn == "CIFAR100_Densenet": nnStructure = "DenseNet"
-    if nn == "CIFAR10_Wideresnet" or nn == "CIFAR100_Wideresnet": nnStructure = "Wide-ResNet-28-X0"
-    
+def metric(indis,data,model):
+    if indis=='CIFAR10':
+        indis='CIFAR-10'
+    elif indis=='CIFAR100':
+        indis='CIFAR-100'
+    nnStructure = model
     if data == "SVHN" : dataName = "SVHN"
     if data == "MNIST" : dataName = "MNIST"
     if data == "CIFAR100" : dataName = "CIFAR-100"

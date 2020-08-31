@@ -31,15 +31,13 @@ def testData(model,criterion,CUDA_DEVICE,in_dm,out_dm,noiseMagnitude,temperature
     out_dm.setup()
     testloader10=in_dm.test_dataloader()
     testloader = out_dm.test_dataloader()
-
+    
     for j, data in enumerate(testloader10):
         if j<1000: continue
         images, _ = data
-        
         inputs = Variable(images.cuda(CUDA_DEVICE), requires_grad = True)
         outputs = model.forward(inputs)
         
-
         # Calculating the confidence of the output, no perturbation added here, no temperature scaling used
         nnOutputs = outputs.data.cpu()
         nnOutputs = nnOutputs.numpy()
@@ -90,12 +88,9 @@ def testData(model,criterion,CUDA_DEVICE,in_dm,out_dm,noiseMagnitude,temperature
         if j<1000: continue
         images, _ = data
     
-    
         inputs = Variable(images.cuda(CUDA_DEVICE), requires_grad = True)
         outputs = model(inputs)
         
-
-
         # Calculating the confidence of the output, no perturbation added here
         nnOutputs = outputs.data.cpu()
         nnOutputs = nnOutputs.numpy()
@@ -142,7 +137,7 @@ def testData(model,criterion,CUDA_DEVICE,in_dm,out_dm,noiseMagnitude,temperature
 
 
 
-def testGaussian(model,criterion,CUDA_DEVICE,in_dm,magnitude,temperature):
+def testGaussian(model,criterion,CUDA_DEVICE,in_dm,noiseMagnitude,temperature):
     t0 = time.time()
     f1 = open("./softmax_scores/confidence_Base_In.txt", 'w')
     f2 = open("./softmax_scores/confidence_Base_Out.txt", 'w')
@@ -152,7 +147,6 @@ def testGaussian(model,criterion,CUDA_DEVICE,in_dm,magnitude,temperature):
     N = 10000
     print("Processing in-distribution images")
     in_dm.setup()
-    out_dm.setup()
     testloader10=in_dm.test_dataloader()
     testloader = in_dm.test_dataloader()
 
@@ -272,7 +266,7 @@ def testGaussian(model,criterion,CUDA_DEVICE,in_dm,magnitude,temperature):
 
 
 
-def testUni(model,criterion,CUDA_DEVICE,in_dm,magnitude,temperature):
+def testUni(model,criterion,CUDA_DEVICE,in_dm,noiseMagnitude,temperature):
     t0 = time.time()
     f1 = open("./softmax_scores/confidence_Base_In.txt", 'w')
     f2 = open("./softmax_scores/confidence_Base_Out.txt", 'w')
@@ -281,9 +275,7 @@ def testUni(model,criterion,CUDA_DEVICE,in_dm,magnitude,temperature):
 ########################################In-Distribution###############################################
     N = 10000
     print("Processing in-distribution images")
-
     in_dm.setup()
-    out_dm.setup()
     testloader10=in_dm.test_dataloader()
     testloader = in_dm.test_dataloader()
 
@@ -397,14 +389,3 @@ def testUni(model,criterion,CUDA_DEVICE,in_dm,magnitude,temperature):
             t0 = time.time()
 
         if j== N-1: break
-
-
-
-
-
-
-
-
-
-
-

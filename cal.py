@@ -24,6 +24,8 @@ from datasets.SVHN import *
 from datasets.Imagenet import *
 from utils.args import *
 
+from distribution_detector import DISTRIBUTION_DETECTOR
+import pdb
 start = time.time()
 
 def test(args):
@@ -31,7 +33,7 @@ def test(args):
     # 1) in_dataset     : CIFAR10
     # 2) out_dataset    : LSUN
     # 3) nn             : Densenet
-    # 4) magnitude      : 0.0014
+    # 4) magnitude      : 0.0012
     # 5) temperature    : 1000
     # 6) gpu            : 0
 
@@ -45,22 +47,29 @@ def test(args):
     CUDA_DEVICE = args.gpu
 
     ##### Datamodule setting #####
-    in_dm = globals()[in_dataset+'DataModule'](batch_size=1)
-    out_dm = globals()[out_dataset+'DataModule'](batch_size=1)
+    in_dm = globals()[in_dataset+'DataModule'](batch_size=64)
+    if out_dataset != "Gaussian" and out_dataset!= "Uniform":
+        out_dm = globals()[out_dataset+'DataModule'](batch_size=64)
   
     ##### Pretrained model setting #####
     model_name = in_dataset+'_'+NNModels
-    model = globals()[model_name]()
+    model = globals()[model_name]()                                 # only model module is imported
     modelpath = './workspace/model_ckpts/' + model_name + '/'
-    os.makedirs(modelpath, exist_ok=True)
     checkpoint_callback=ModelCheckpoint(filepath=modelpath)
-    trainer=Trainer(checkpoint_callback=checkpoint_callback, gpus=1, num_nodes=1, max_epochs = 180)
+    trainer=Trainer(checkpoint_callback=checkpoint_callback, gpus=1, num_nodes=1, max_epochs = 1)
+
+    ##### Open files to save confidence score #####
+    f1 = open("./softmax_scores/confidence_Base_In.txt", 'w')
+    f2 = open("./softmax_scores/confidence_Base_Out.txt", 'w')
+    g1 = open("./softmax_scores/confidence_Our_In.txt", 'w')
+    g2 = open("./softmax_scores/confidence_Our_Out.txt", 'w')
+
+
     if os.path.isfile(modelpath + 'final.ckpt'):
         model = model.load_from_checkpoint(checkpoint_path=modelpath + 'final.ckpt')
-        model = model.cuda(CUDA_DEVICE)
     else:
         print('No pretrained model.','Execute train.py first',sep='\n')
-
+    
     if out_dataset == "Gaussian":
         calData.testGaussian(model,criterion,CUDA_DEVICE,in_dm,magnitude,temperature)
         calMetric.metric(model_name,out_dataset)
@@ -68,10 +77,22 @@ def test(args):
         calData.testUni(model,criterion,CUDA_DEVICE,in_dm,magnitude,temperature)
         calMetric.metric(model_name,out_dataset)
     else:
-        # calData.testData(model,criterion,CUDA_DEVICE,in_dm,out_dm,magnitude,temperature)
-        calMetric.metric(model_name,out_dataset)
- 
+        # setting in-dist detector
+        detector = DISTRIBUTION_DETECTOR(model,criterion,CUDA_DEVICE,magnitude,temperature,f1,g1)
+        trainer.test(detector,datamodule=in_dm)   # 이거는 잘 돌아감. 정확도 93%
+        trainer.fit(detector,datamodule=in_dm)      # 이거는 잘 안돌아감. trainer.fit을 하면
+                                                    # pretrained_model을 넣어도 초기화를 시키는듯
+                                                    # trainer.test때와는 달리 self.forward의 argmax()=3이 나옴
+        
+        # setting out-dist detector
+        detector = DISTRIBUTION_DETECTOR(model,criterion,CUDA_DEVICE,magnitude,temperature,f2,g2)
+        trainer.fit(detector,datamodule=out_dm)
+        trainer.test(detector,datamodule=in_dm)
 
+        # calculate metrics
+        calMetric.metric(in_dataset,out_dataset,NNModels)
 
-
-    
+        # TODO : delete validation loop in trainer.fit()
+        # TODO : check whether pretrained model is used in trainer.fit().
+        # TODO : combine calMetric.metric into trainer.test
+        # TODO : import Gaussian, Uniform into out_dataset

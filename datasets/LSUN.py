@@ -25,11 +25,11 @@ class LSUNDataModule(pl.LightningDataModule):
         self.lsun_dataset = datasets.ImageFolder(root='./workspace/datasets/LSUN', transform=self.transform)
         
     def train_dataloader(self):
-        pass
+        return DataLoader(self.lsun_dataset, batch_size=self.batch_size, shuffle=False, num_workers=8)
 
     def val_dataloader(self):
-        pass
-
+        return DataLoader(self.lsun_dataset, batch_size=64, shuffle=False, num_workers=8)
+        
     def test_dataloader(self):
         return DataLoader(self.lsun_dataset, batch_size=self.batch_size, shuffle=False, num_workers=8)
 
@@ -54,10 +54,10 @@ class LSUN_resizeDataModule(pl.LightningDataModule):
         self.lsun_resize_dataset = datasets.ImageFolder(root='./workspace/datasets/LSUN_resize', transform=self.transform)
         
     def train_dataloader(self):
-        pass
+        return DataLoader(self.lsun_resize_dataset, batch_size=self.batch_size, shuffle=False, num_workers=8)
 
     def val_dataloader(self):
-        pass
+        return DataLoader(self.lsun_resize_dataset, batch_size=self.batch_size, shuffle=False, num_workers=8)
 
     def test_dataloader(self):
         return DataLoader(self.lsun_resize_dataset, batch_size=self.batch_size, shuffle=False, num_workers=8)
