@@ -24,7 +24,6 @@ import torchvision.transforms as transforms
 import numpy as np
 import time
 from scipy import misc
-import pdb
 
 def tpr95(name):
     #calculate the falsepositive error when tpr is 95%
@@ -74,7 +73,6 @@ def tpr95(name):
         if tpr <= 0.9505 and tpr >= 0.9495:
             fpr += error2
             total += 1
- 
     fprNew = fpr/total    
     return fprBase, fprNew
 
@@ -263,10 +261,10 @@ def detection(name):
     X1 = cifar[:, 2]
     errorBase = 1.0
     for delta in np.arange(start, end, gap):
-        tpr = np.sum(np.sum(X1 < delta)) / np.float(len(X1))
+        fnr = np.sum(np.sum(X1 < delta)) / np.float(len(X1))
         error2 = np.sum(np.sum(Y1 > delta)) / np.float(len(Y1))
-        errorBase = np.minimum(errorBase, (tpr+error2)/2.0)
-
+        if fnr>0.0495 and fnr<0.0505:
+            errorBase = np.minimum(errorBase, (fnr+error2)/2.0)
     # calculate our algorithm
     T = 1000
     cifar = np.loadtxt('./softmax_scores/confidence_Our_In.txt', delimiter=',')
@@ -283,14 +281,11 @@ def detection(name):
     X1 = cifar[:, 2]
     errorNew = 1.0
     for delta in np.arange(start, end, gap):
-        tpr = np.sum(np.sum(X1 < delta)) / np.float(len(X1))
+        fnr = np.sum(np.sum(X1 < delta)) / np.float(len(X1))
         error2 = np.sum(np.sum(Y1 > delta)) / np.float(len(Y1))
-        errorNew = np.minimum(errorNew, (tpr+error2)/2.0)
-            
+        if fnr>0.0495 and fnr<0.0505:
+            errorNew = np.minimum(errorNew, (fnr+error2)/2.0)
     return errorBase, errorNew
-
-
-
 
 def metric(indis,data,model):
     if indis=='CIFAR10':

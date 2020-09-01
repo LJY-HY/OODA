@@ -11,7 +11,6 @@ import torch.utils.data
 import pytorch_lightning as pl
 from pytorch_lightning.metrics.functional import accuracy
 from torch.autograd import Variable
-import pdb
 
 '''
 LIGHTNING MODULE SKELETON
@@ -66,7 +65,6 @@ class DISTRIBUTION_DETECTOR(pl.LightningModule):
         labels = Variable(torch.LongTensor([maxIndexTemp]).cuda(self.CUDA_DEVICE))
         loss = self.criterion(outputs, labels[0])
         loss.backward()
-
         # Normalizing the gradient to binary in {0, 1}
         gradient =  torch.ge(inputs.grad.data, 0)
         gradient = (gradient.float() - 0.5) * 2

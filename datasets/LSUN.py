@@ -28,7 +28,7 @@ class LSUNDataModule(pl.LightningDataModule):
         return DataLoader(self.lsun_dataset, batch_size=self.batch_size, shuffle=False, num_workers=8)
 
     def val_dataloader(self):
-        return DataLoader(self.lsun_dataset, batch_size=64, shuffle=False, num_workers=8)
+        return DataLoader(self.lsun_dataset, batch_size=self.batch_size, shuffle=False, num_workers=8)
         
     def test_dataloader(self):
         return DataLoader(self.lsun_dataset, batch_size=self.batch_size, shuffle=False, num_workers=8)

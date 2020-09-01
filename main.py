@@ -37,3 +37,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+# TODO : In case of CIFAR10/LSUN pair, noise is set to 0 in paper. check this setting
+# TODO : Make MNIST/SVHN datamodule
+# TODO : 

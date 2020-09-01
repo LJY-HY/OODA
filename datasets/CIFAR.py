@@ -66,7 +66,7 @@ class CIFAR100DataModule(pl.LightningDataModule):
         return cifar_train
 
     def val_dataloader(self):
-        cifar_val = DataLoader(self.cifar_test, batch_size=64, shuffle=False, num_workers=8)
+        cifar_val = DataLoader(self.cifar_test, batch_size=self.batch_size, shuffle=False, num_workers=8)
         return cifar_val
 
     def test_dataloader(self):

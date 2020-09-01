@@ -25,7 +25,6 @@ from datasets.Imagenet import *
 from utils.args import *
 
 from distribution_detector import DISTRIBUTION_DETECTOR
-import pdb
 start = time.time()
 
 def test(args):
@@ -79,20 +78,13 @@ def test(args):
     else:
         # setting in-dist detector
         detector = DISTRIBUTION_DETECTOR(model,criterion,CUDA_DEVICE,magnitude,temperature,f1,g1)
-        trainer.test(detector,datamodule=in_dm)   # 이거는 잘 돌아감. 정확도 93%
-        trainer.fit(detector,datamodule=in_dm)      # 이거는 잘 안돌아감. trainer.fit을 하면
-                                                    # pretrained_model을 넣어도 초기화를 시키는듯
-                                                    # trainer.test때와는 달리 self.forward의 argmax()=3이 나옴
-        
+        trainer.fit(detector,datamodule=in_dm)      
         # setting out-dist detector
         detector = DISTRIBUTION_DETECTOR(model,criterion,CUDA_DEVICE,magnitude,temperature,f2,g2)
         trainer.fit(detector,datamodule=out_dm)
-        trainer.test(detector,datamodule=in_dm)
-
         # calculate metrics
         calMetric.metric(in_dataset,out_dataset,NNModels)
 
         # TODO : delete validation loop in trainer.fit()
-        # TODO : check whether pretrained model is used in trainer.fit().
         # TODO : combine calMetric.metric into trainer.test
         # TODO : import Gaussian, Uniform into out_dataset

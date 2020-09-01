@@ -37,7 +37,7 @@ class CIFAR10_LIGHTNING(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = optim.SGD(self.parameters(), lr=1e-1, momentum=0.9, weight_decay=5e-4)
-        lr_scheduler = {'scheduler': torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[20,40], gamma=0.1), 'interval': 'epoch'}
+        lr_scheduler = {'scheduler': torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[25,50], gamma=0.1), 'interval': 'epoch'}
         return [optimizer], [lr_scheduler]
 
     def validation_step(self,batch,batch_idx):
