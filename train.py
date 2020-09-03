@@ -7,10 +7,11 @@ from pytorch_lightning.loggers import TensorBoardLogger
 
 from models.classifiers import *
 from datasets.CIFAR import *
+from datasets.SVHN import *
 from utils.args import *
 
 if __name__ == '__main__':
-    datasets = ['CIFAR10']
+    datasets = ['SVHN']
     NNModels = ['Densenet_BC']
     for dataset in datasets:
         if dataset == 'CIFAR10':
@@ -19,6 +20,9 @@ if __name__ == '__main__':
         elif dataset == 'CIFAR100':
             dm = CIFAR100DataModule()
             max_epochs = 180
+        elif dataset == 'SVHN':
+            dm = SVHNDataModule()
+            max_epochs = 30
         for NNModel in NNModels:
             model_name = dataset + '_' + NNModel
             model = globals()[model_name]()

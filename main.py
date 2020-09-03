@@ -16,11 +16,11 @@ import cal
 
 parser = argparse.ArgumentParser(description='Pytorch Detecting Out-of-distribution examples in neural networks')
 
-parser.add_argument('--in_dataset', default='CIFAR10',type=str, choices=['CIFAR10','CIFAR100'],
+parser.add_argument('--in_dataset', default='CIFAR10',type=str, choices=['CIFAR10','CIFAR100','SVHN','MNIST_M'],
                     help='in-distribution dataset')
-parser.add_argument('--out_dataset', default='CIFAR100', type=str, choices=['LSUN','LSUN_resize','Imagenet','Uniform','Gaussian','SVHN','MNIST_M'],
+parser.add_argument('--out_dataset', default='LSUN', type=str, choices=['LSUN','LSUN_resize','Imagenet','Uniform','Gaussian','SVHN','MNIST_M','CIFAR10','MNIST'],
                     help='out-of-distribution dataset')
-parser.add_argument('--nn', default="Densenet", type=str,
+parser.add_argument('--nn', default="Densenet_BC", type=str,
                     choices=['VGG','Resnet','WideResnet','Densenet','Densenet_BC'], help='neural network name and training set')
 parser.add_argument('--magnitude', default=0.0014, type=float,
                     help='perturbation magnitude')
@@ -37,9 +37,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-# TODO : In case of CIFAR10/LSUN pair, noise is set to 0 in paper. check this setting
-# TODO : Make MNIST/SVHN datamodule
-# TODO : 

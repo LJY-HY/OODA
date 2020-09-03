@@ -46,13 +46,14 @@ class CIFAR10_LIGHTNING(pl.LightningModule):
         loss = F.cross_entropy(output, target)
         pred = output.argmax(dim=1,keepdim=True)
         correct = pred.eq(target.view_as(pred)).sum().item()
-        return {'val_loss':loss,'correct':correct}
+        return {'val_loss':loss,'correct':correct, 'batch_size':target.shape[0]}
 
     def validation_epoch_end(self,outputs):
         avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
         sum_correct = sum([x['correct'] for x in outputs])
+        dataset_size = sum([x['batch_size'] for x in outputs])
         tensorboard_logs = {'val_loss':avg_loss}
-        print('Validation accuracy : ',sum_correct/10000,'\n\n') # self.arg.validation_size
+        print('Validation accuracy : ',sum_correct/dataset_size,'\n\n') # self.arg.validation_size
         return {'avg_val_loss':avg_loss, 'log':tensorboard_logs}    
 
     def test_step(self,batch,batch_idx):
@@ -60,13 +61,14 @@ class CIFAR10_LIGHTNING(pl.LightningModule):
         output = self.forward(data)
         pred = output.argmax(dim=1,keepdim=True)
         correct = pred.eq(target.view_as(pred)).sum().item()
-        return {'test_loss':F.cross_entropy(output,target), 'correct':correct}
+        return {'test_loss':F.cross_entropy(output,target), 'correct':correct,'batch_size':target.shape[0]}
 
     def test_epoch_end(self, outputs):
         avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
         sum_correct = sum([x['correct'] for x in outputs])
+        dataset_size = sum([x['batch_size'] for x in outputs])
         tensorboard_logs = {'test_loss': avg_loss}
-        print('Test accuracy :',sum_correct/10000,'\n')
+        print('Test accuracy :',sum_correct/dataset_size,'\n')
         return {'avg_test_loss': avg_loss, 'log': tensorboard_logs}
 
 class CIFAR10_VGG(CIFAR10_LIGHTNING):
@@ -108,6 +110,17 @@ class CIFAR10_Densenet_BC(CIFAR10_LIGHTNING):
         super(CIFAR10_Densenet_BC,self).__init__()
         self.model = DenseNet_BC(num_classes=10)
 
+class SVHN_Densenet_BC(CIFAR10_LIGHTNING):
+    def __init__(self):
+        super(SVHN_Densenet_BC,self).__init__()
+        self.model = DenseNet_BC(num_classes=10)
+
+    def configure_optimizers(self):
+        optimizer = optim.SGD(self.parameters(), lr=1e-1, momentum=0.9, weight_decay=5e-4)
+        lr_scheduler = {'scheduler': torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[10,20], gamma=0.1), 'interval': 'epoch'}
+        return [optimizer], [lr_scheduler]
+
+    
 '''
 CIFAR100_model skeleton
 '''

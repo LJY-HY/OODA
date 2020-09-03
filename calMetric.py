@@ -31,7 +31,7 @@ def tpr95(name):
     T = 1
     cifar = np.loadtxt('./softmax_scores/confidence_Base_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Base_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 1 
     if name == "CIFAR-100": 
@@ -55,7 +55,7 @@ def tpr95(name):
     T = 1000
     cifar = np.loadtxt('./softmax_scores/confidence_Our_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Our_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 0.12 
     if name == "CIFAR-100": 
@@ -82,7 +82,7 @@ def auroc(name):
     T = 1
     cifar = np.loadtxt('./softmax_scores/confidence_Base_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Base_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 1 
     if name == "CIFAR-100": 
@@ -104,7 +104,7 @@ def auroc(name):
     T = 1000
     cifar = np.loadtxt('./softmax_scores/confidence_Our_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Our_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 0.12 
     if name == "CIFAR-100": 
@@ -130,7 +130,7 @@ def auprIn(name):
     T = 1
     cifar = np.loadtxt('./softmax_scores/confidence_Base_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Base_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 1 
     if name == "CIFAR-100": 
@@ -161,7 +161,7 @@ def auprIn(name):
     T = 1000
     cifar = np.loadtxt('./softmax_scores/confidence_Our_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Our_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 0.12 
     if name == "CIFAR-100": 
@@ -192,7 +192,7 @@ def auprOut(name):
     T = 1
     cifar = np.loadtxt('./softmax_scores/confidence_Base_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Base_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 1 
     if name == "CIFAR-100": 
@@ -218,7 +218,7 @@ def auprOut(name):
     T = 1000
     cifar = np.loadtxt('./softmax_scores/confidence_Our_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Our_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 0.12 
     if name == "CIFAR-100": 
@@ -249,7 +249,7 @@ def detection(name):
     T = 1
     cifar = np.loadtxt('./softmax_scores/confidence_Base_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Base_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 1 
     if name == "CIFAR-100": 
@@ -269,7 +269,7 @@ def detection(name):
     T = 1000
     cifar = np.loadtxt('./softmax_scores/confidence_Our_In.txt', delimiter=',')
     other = np.loadtxt('./softmax_scores/confidence_Our_Out.txt', delimiter=',')
-    if name == "CIFAR-10": 
+    if name == "CIFAR-10" or name == "SVHN": 
         start = 0.1
         end = 0.12 
     if name == "CIFAR-100": 
@@ -292,9 +292,13 @@ def metric(indis,data,model):
         indis='CIFAR-10'
     elif indis=='CIFAR100':
         indis='CIFAR-100'
+    else:
+        pass
     nnStructure = model
+    if data == "CIFAR10" : dataName = "CIFAR-10"
     if data == "SVHN" : dataName = "SVHN"
     if data == "MNIST" : dataName = "MNIST"
+    if data == "MNIST_M" : dataName = "MNIST-M"
     if data == "CIFAR100" : dataName = "CIFAR-100"
     if data == "Imagenet": dataName = "Tiny-ImageNet (crop)"
     if data == "Imagenet_resize": dataName = "Tiny-ImageNet (resize)"

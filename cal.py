@@ -11,7 +11,6 @@ import numpy as np
 import time
 from scipy import misc
 import calMetric
-import calData
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -21,6 +20,7 @@ from models.classifiers import *
 from datasets.CIFAR import *
 from datasets.LSUN import *
 from datasets.SVHN import *
+from datasets.MNIST_M import *
 from datasets.Imagenet import *
 from utils.args import *
 

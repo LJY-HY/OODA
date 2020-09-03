@@ -10,9 +10,7 @@ class MNISTDataModule(pl.LightningDataModule):
         super().__init__()
         self.mean = 0.1307
         self.std = 0.3081
-        self.transform = transforms.Compose([transforms.RandomCrop(32,padding=4),
-                                            transforms.RandomHorizontalFlip(),
-                                            transforms.ToTensor(),
+        self.transform = transforms.Compose([transforms.ToTensor(),
                                             transforms.Normalize(self.mean, self.std)])
         self.batch_size = batch_size
 
@@ -21,9 +19,8 @@ class MNISTDataModule(pl.LightningDataModule):
         datasets.MNIST(root='./workspace/datasets/MNIST',train=False,download=True, transform=self.transform)
 
     def setup(self, stage=None):
-        cifar_train = datasets.MNIST(root='./workspace/datasets/MNIST',train=True,download=True, transform=self.transform)
         self.cifar_test = datasets.MNIST(root='./workspace/datasets/MNIST',train=False,download=True, transform=self.transform)
-        self.cifar_train = cifar_train
+        self.cifar_train = datasets.MNIST(root='./workspace/datasets/MNIST',train=True,download=True, transform=self.transform)
 
     def train_dataloader(self):
         cifar_train = DataLoader(self.cifar_train, batch_size=self.batch_size, shuffle=True, num_workers=8)
