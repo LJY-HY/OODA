@@ -14,11 +14,6 @@ if __name__ == '__main__':
     datasets = ['SVHN']
     NNModels = ['Densenet_BC']
     for dataset in datasets:
-<<<<<<< HEAD
-        if dataset == 'SVHN':
-            dm = SVHNDataModule()
-            max_epochs = 100
-=======
         if dataset == 'CIFAR10':
             dm = CIFAR10DataModule()
             max_epochs = 60
@@ -28,7 +23,6 @@ if __name__ == '__main__':
         elif dataset == 'SVHN':
             dm = SVHNDataModule()
             max_epochs = 30
->>>>>>> 2f6818701ec88a2438c019627a28a8403ca3678e
         for NNModel in NNModels:
             model_name = dataset + '_' + NNModel
             model = globals()[model_name]()

@@ -1,6 +1,5 @@
 # Train CIFAR10,CIFAR100 with Pytorch-lightning
-Measure Out-of-Distribution Detection using several methods with [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning).
-Methods includes [odin](https://arxiv.org/abs/1706.02690)
+Measure Out-of-Distribution Detection using several methods with [pytorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning). Methods include [ODIN](https://arxiv.org/abs/1706.02690) etc.
 
 ## Requirements
 - setup/requirements.txt
@@ -24,7 +23,7 @@ pip3 install -r setup/requirements.txt
 ```
 
 ## How to train models
-After you have cloned the repository, you can train each dataset of either cifar10, cifar100, SVHN by running the script below.
+After you have cloned the repository, you can train each models with datasets cifar10, cifar100, SVHN. Trainable models are [VGG](https://arxiv.org/abs/1409.1556), [Resnet](https://arxiv.org/abs/1512.03385), [WideResnet](https://arxiv.org/pdf/1605.07146.pdf), [Densenet-BC](https://arxiv.org/pdf/1608.06993.pdf), [Densenet](https://arxiv.org/abs/1608.06993).
 
 ```bash
 python train.py
@@ -34,19 +33,15 @@ python train.py
 After you train models, run main.py with several arguments.
 
 ```bash
+# in-distribution : CIFAR10, out-distribution : LSUN, model : Densenet-BC
 python main.py --in_dataset="CIFAR10" --out_dataset="LSUN" --nn="Densetnet_BC"
 ```
 
 ## Detection results
 
--Baseline
+- Densenet-BC
 
-|  In-dist  |  Out-dist  | FPR at TPR 95% | Detection Error |     AUROC     |     AUPR In     |     AUPR Out     |
-|:---------:|:----------:|:--------------:|:---------------:|:-------------:|:---------------:|:----------------:|
-|   CIFAR   |    LSUN    |      38.4%     |      21.5%      |      94.5%    |      95.7%      |      93.2%       |
-
--[Odin](https://arxiv.org/abs/1706.02690)
-
-|  In-dist  |  Out-dist  | FPR at TPR 95% | Detection Error |     AUROC     |     AUPR In     |     AUPR Out     |
-|:---------:|:----------:|:--------------:|:---------------:|:-------------:|:---------------:|:----------------:|
-|   CIFAR   |    LSUN    |      18.1%     |      11.5%      |      97.0%    |      97.4%      |      96.6%       |
+|    Methods    |    In-dist    |    Out-dist   |   FPR at TPR 95%   |   Detection Error  |        AUROC       |       AUPR In      |       AUPR Out      |
+|:-------------:|:-------------:|:-------------:|:------------------:|:------------------:|:------------------:|:------------------:|:-------------------:|
+|   Baseline    |     CIFAR     |      LSUN     |        38.4%       |        21.5%       |        94.5%       |        95.7%       |        93.2%        |
+|[ODIN](https://arxiv.org/abs/1706.02690)|   CIFAR   |    LSUN    |      18.1%     |      11.5%      |      97.0%    |      97.4%      |      96.6%       |

@@ -22,7 +22,7 @@ parser.add_argument('--out_dataset', default='LSUN', type=str, choices=['LSUN','
                     help='out-of-distribution dataset')
 parser.add_argument('--nn', default="Densenet_BC", type=str,
                     choices=['VGG','Resnet','WideResnet','Densenet','Densenet_BC'], help='neural network name and training set')
-parser.add_argument('--magnitude', default=0.0014, type=float,
+parser.add_argument('--magnitude', default=0, type=float,
                     help='perturbation magnitude')
 parser.add_argument('--temperature', default=1000, type=int,
                     help='temperature scaling')

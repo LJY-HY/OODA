@@ -46,9 +46,9 @@ def test(args):
     CUDA_DEVICE = args.gpu
 
     ##### Datamodule setting #####
-    in_dm = globals()[in_dataset+'DataModule'](batch_size=64)
+    in_dm = globals()[in_dataset+'DataModule'](batch_size=1)
     if out_dataset != "Gaussian" and out_dataset!= "Uniform":
-        out_dm = globals()[out_dataset+'DataModule'](batch_size=64)
+        out_dm = globals()[out_dataset+'DataModule'](batch_size=1)
   
     ##### Pretrained model setting #####
     model_name = in_dataset+'_'+NNModels
