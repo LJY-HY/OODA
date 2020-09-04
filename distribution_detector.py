@@ -100,13 +100,14 @@ class DISTRIBUTION_DETECTOR(pl.LightningModule):
         loss = F.cross_entropy(output, target)
         pred = output.argmax(dim=1,keepdim=True)
         correct = pred.eq(target.view_as(pred)).sum().item()
-        return {'val_loss':loss,'correct':correct}
+        return {'val_loss':loss,'correct':correct, 'batch_size':target.shape[0]}
 
     def validation_epoch_end(self,outputs):
         avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
         sum_correct = sum([x['correct'] for x in outputs])
+        dataset_size = sum([x['batch_size'] for x in outputs])
         tensorboard_logs = {'val_loss':avg_loss}
-        print('Validation accuracy : ',sum_correct/10000,'\n\n') # self.arg.validation_size
+        print('Validation accuracy : ',sum_correct/dataset_size,'\n\n') # self.arg.validation_size
         return {'avg_val_loss':avg_loss, 'log':tensorboard_logs}    
 
     def test_step(self,batch,batch_idx):
@@ -114,13 +115,14 @@ class DISTRIBUTION_DETECTOR(pl.LightningModule):
         output = self.forward(data)
         pred = output.argmax(dim=1,keepdim=True)
         correct = pred.eq(target.view_as(pred)).sum().item()
-        return {'test_loss':F.cross_entropy(output,target), 'correct':correct}
+        return {'test_loss':F.cross_entropy(output,target), 'correct':correct,'batch_size':target.shape[0]}
 
     def test_epoch_end(self, outputs):
         avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
         sum_correct = sum([x['correct'] for x in outputs])
+        dataset_size = sum([x['batch_size'] for x in outputs])
         tensorboard_logs = {'test_loss': avg_loss}
-        print('Test accuracy :',sum_correct/10000,'\n')
+        print('Test accuracy :',sum_correct/dataset_size,'\n')            
         return {'avg_test_loss': avg_loss, 'log': tensorboard_logs}
 
     def backward(self,trainer,loss,optimizer,optimizer_idx):
@@ -130,3 +132,6 @@ class DISTRIBUTION_DETECTOR(pl.LightningModule):
                         second_order_closure=None, on_tpu=False,
                         using_native_amp=False,using_lbfgs=False):
         pass
+
+
+# TODO : sum_correct has to be divided by size of test_dataset
