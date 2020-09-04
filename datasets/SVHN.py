@@ -32,7 +32,7 @@ class SVHNDataModule(pl.LightningDataModule):
         return SVHN_train
 
     def val_dataloader(self):
-        SVHN_val = DataLoader(self.SVHN_val, batch_size=self.batch_size, shuffle=False, num_workers=8)
+        SVHN_val = DataLoader(self.SVHN_train, batch_size=self.batch_size, shuffle=False, num_workers=8)
         return SVHN_val
 
     def test_dataloader(self):

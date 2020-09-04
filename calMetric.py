@@ -292,8 +292,11 @@ def metric(indis,data,model):
         indis='CIFAR-10'
     elif indis=='CIFAR100':
         indis='CIFAR-100'
+    elif indis=='SVHN':
+        indis='SVHN'
     nnStructure = model
     if data == "SVHN" : dataName = "SVHN"
+    if data == "MNIST-M" dataName = "MNIST-M"
     if data == "MNIST" : dataName = "MNIST"
     if data == "CIFAR100" : dataName = "CIFAR-100"
     if data == "Imagenet": dataName = "Tiny-ImageNet (crop)"
