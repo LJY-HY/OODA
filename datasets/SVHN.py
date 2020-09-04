@@ -35,16 +35,8 @@ class SVHNDataModule(pl.LightningDataModule):
         return SVHN_train
 
     def val_dataloader(self):
-<<<<<<< HEAD
-        SVHN_val = DataLoader(self.SVHN_train, batch_size=self.batch_size, shuffle=False, num_workers=8)
-=======
         SVHN_val = DataLoader(self.SVHN_test, batch_size=self.batch_size, shuffle=False, num_workers=8)
->>>>>>> 2f6818701ec88a2438c019627a28a8403ca3678e
         return SVHN_val
 
     def test_dataloader(self):
         return DataLoader(self.SVHN_test_10000, batch_size=self.batch_size, shuffle=False, num_workers=8)
-
-
-# TODO : test_dataloader has to return only 10,000 datasets
-
