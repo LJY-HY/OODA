@@ -151,17 +151,6 @@ class CIFAR10_Densenet_BC(CIFAR10_LIGHTNING):
         super(CIFAR10_Densenet_BC,self).__init__()
         self.model = DenseNet_BC(num_classes=10)
 
-class SVHN_Densenet_BC(CIFAR10_LIGHTNING):
-    def __init__(self):
-        super(SVHN_Densenet_BC,self).__init__()
-        self.model = DenseNet_BC(num_classes=10)
-
-    def configure_optimizers(self):
-        optimizer = optim.SGD(self.parameters(), lr=1e-1, momentum=0.9, weight_decay=5e-4)
-        lr_scheduler = {'scheduler': torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[10,20], gamma=0.1), 'interval': 'epoch'}
-        return [optimizer], [lr_scheduler]
-
-
 '''
 CIFAR100 trained model skeleton
 '''
