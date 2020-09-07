@@ -10,7 +10,6 @@ import torchvision.transforms as transforms
 import numpy as np
 import time
 from scipy import misc
-import calMetric
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -23,8 +22,9 @@ from datasets.SVHN import *
 from datasets.MNIST_M import *
 from datasets.Imagenet import *
 from utils.args import *
+import calMetric
 
-from distribution_detector import DISTRIBUTION_DETECTOR
+from ood_method.distribution_detector import DISTRIBUTION_DETECTOR
 start = time.time()
 
 def test(args):
@@ -46,9 +46,9 @@ def test(args):
     CUDA_DEVICE = args.gpu
 
     ##### Datamodule setting #####
-    in_dm = globals()[in_dataset+'DataModule'](batch_size=1)
+    in_dm = globals()[in_dataset+'DataModule'](batch_size=64)
     if out_dataset != "Gaussian" and out_dataset!= "Uniform":
-        out_dm = globals()[out_dataset+'DataModule'](batch_size=1)
+        out_dm = globals()[out_dataset+'DataModule'](batch_size=64)
   
     ##### Pretrained model setting #####
     model_name = in_dataset+'_'+NNModels

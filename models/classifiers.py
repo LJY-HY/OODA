@@ -213,3 +213,70 @@ class CIFAR100_Densenet_BC(CIFAR10_LIGHTNING):
     def __init__(self):
         super(CIFAR100_Densenet_BC,self).__init__()
         self.model = DenseNet_BC(num_classes=100)
+
+
+'''
+MNIST trained model skeleton
+'''
+class MNIST_LIGHTNING(LIGHTNING_Model):
+    # This Module is based on VGG-16
+    def __init__(self):
+        super(MNIST_LIGHTNING, self).__init__()
+
+    def forward(self, x):
+        output = self.model(x)
+        return output
+
+    def configure_optimizers(self):
+        optimizer = optim.SGD(self.parameters(), lr=1e-1, momentum=0.9, weight_decay=5e-4)
+        lr_scheduler = {'scheduler': torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[20,40], gamma=0.1), 'interval': 'epoch'}
+        return [optimizer], [lr_scheduler]
+
+class MNIST_VGG(MNIST_LIGHTNING):
+    # This Module is based on VGG-16 for dataset MNIST
+    def __init__(self):
+        super(MNIST_VGG, self).__init__()
+        self.model = VGG.vgg16_bn()
+        self.model.avgpool = nn.AdaptiveAvgPool2d((1,1))
+        self.model.classifier = nn.Sequential(
+            nn.Linear(512,10)
+        )
+
+class MNIST_Resnet(MNIST_LIGHTNING):
+    # This Module is based on Resnet-50 for dataset MNIST
+    def __init__(self):
+        super(MNIST_Resnet, self).__init__()
+        self.model = Resnet.ResNet(Resnet.Bottleneck,[3,4,6,3],num_classes=10)
+        self.model.inplanes=64
+        self.model.conv1 = nn.Conv2d(3,64,kernel_size=3,stride=1,padding=1,bias=False)
+        self.model.bn1 = nn.BatchNorm2d(64)
+        self.model.linear = nn.Linear(512*Resnet.Bottleneck.expansion, 10)
+        del self.model.maxpool
+        self.model.maxpool = lambda x : x
+
+class MNIST_WideResnet(MNIST_LIGHTNING):
+    # This Module is based on WideResNet28-10 for dataset MNIST
+    def __init__(self):
+        super(MNIST_WideResnet, self).__init__()
+        self.model = Wide_ResNet(28,10,0.3,10)
+
+class MNIST_Densenet(MNIST_LIGHTNING):
+    # This Module is based on Densenet for dataset MNIST
+    def __init__(self):
+        super(MNIST_Densenet, self).__init__()
+        self.model = DenseNet()
+
+class MNIST_Densenet_BC(MNIST_LIGHTNING):
+    def __init__(self):
+        super(MNIST_Densenet_BC,self).__init__()
+        self.model = DenseNet_BC(num_classes=10)
+
+class SVHN_Densenet_BC(MNIST_LIGHTNING):
+    def __init__(self):
+        super(SVHN_Densenet_BC,self).__init__()
+        self.model = DenseNet_BC(num_classes=10)
+
+    def configure_optimizers(self):
+        optimizer = optim.SGD(self.parameters(), lr=1e-1, momentum=0.9, weight_decay=5e-4)
+        lr_scheduler = {'scheduler': torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[10,20], gamma=0.1), 'interval': 'epoch'}
+        return [optimizer], [lr_scheduler]

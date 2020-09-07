@@ -292,17 +292,12 @@ def metric(indis,data,model):
         indis='CIFAR-10'
     elif indis=='CIFAR100':
         indis='CIFAR-100'
-<<<<<<< HEAD
     elif indis=='SVHN':
         indis='SVHN'
-=======
-    else:
-        pass
->>>>>>> 2f6818701ec88a2438c019627a28a8403ca3678e
     nnStructure = model
     if data == "CIFAR10" : dataName = "CIFAR-10"
     if data == "SVHN" : dataName = "SVHN"
-    if data == "MNIST-M" dataName = "MNIST-M"
+    if data == "MNIST-M" : dataName = "MNIST-M"
     if data == "MNIST" : dataName = "MNIST"
     if data == "MNIST_M" : dataName = "MNIST-M"
     if data == "CIFAR100" : dataName = "CIFAR-100"
