@@ -10,7 +10,7 @@ class MNISTDataModule(pl.LightningDataModule):
         super().__init__()
         self.mean = 0.1307
         self.std = 0.3081
-        self.transform = transforms.Compose([transforms.Pad(padding=2,padding_mode='symmetric'),
+        self.transform = transforms.Compose([transforms.Pad(padding=2,padding_mode='edge'),
                                             transforms.ToTensor(),
                                             transforms.Normalize(self.mean, self.std)])
         self.batch_size = batch_size
@@ -22,6 +22,7 @@ class MNISTDataModule(pl.LightningDataModule):
     def setup(self, stage=None):
         self.mnist_test = datasets.MNIST(root='./workspace/datasets/MNIST',train=False,download=True, transform=self.transform)
         self.mnist_train = datasets.MNIST(root='./workspace/datasets/MNIST',train=True,download=True, transform=self.transform)
+        return self.mnist_train,self.mnist_test
 
     def train_dataloader(self):
         mnist_train = DataLoader(self.mnist_train, batch_size=self.batch_size, shuffle=True, num_workers=8)
