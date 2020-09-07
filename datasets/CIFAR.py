@@ -24,13 +24,14 @@ class CIFAR10DataModule(pl.LightningDataModule):
         cifar_train = datasets.CIFAR10(root='./workspace/datasets/cifar10',train=True,download=True, transform=self.transform)
         self.cifar_test = datasets.CIFAR10(root='./workspace/datasets/cifar10',train=False,download=True, transform=self.transform)
         self.cifar_train = cifar_train
+        return self.cifar_train, self.cifar_test
 
     def train_dataloader(self):
         '''
         original cifar_train dataloader is replaced due to the odin.
         '''
-        # cifar_train = DataLoader(self.cifar_train, batch_size=self.batch_size, shuffle=True, num_workers=8)
-        cifar_train = DataLoader(self.cifar_test, batch_size=self.batch_size, shuffle=True, num_workers=8)
+        cifar_train = DataLoader(self.cifar_train, batch_size=self.batch_size, shuffle=True, num_workers=8)
+        # cifar_train = DataLoader(self.cifar_test, batch_size=self.batch_size, shuffle=True, num_workers=8)
         return cifar_train
 
     def val_dataloader(self):
