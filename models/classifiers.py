@@ -53,7 +53,7 @@ class LIGHTNING_Model(pl.LightningModule):
         sum_correct = sum([x['correct'] for x in outputs])
         dataset_size = sum([x['batch_size'] for x in outputs])
         tensorboard_logs = {'val_loss':avg_loss}
-        print('Validation accuracy : ',sum_correct/dataset_size,'\n\n') # self.arg.validation_size
+        print('\nValidation accuracy : ',sum_correct/dataset_size,'\n\n') # self.arg.validation_size
         return {'avg_val_loss':avg_loss, 'log':tensorboard_logs}    
 
     def test_step(self,batch,batch_idx):
@@ -68,7 +68,7 @@ class LIGHTNING_Model(pl.LightningModule):
         sum_correct = sum([x['correct'] for x in outputs])
         dataset_size = sum([x['batch_size'] for x in outputs])
         tensorboard_logs = {'test_loss': avg_loss}
-        print('Test accuracy :',sum_correct/dataset_size,'\n')
+        print('\nTest accuracy :',sum_correct/dataset_size,'\n')
         return {'avg_test_loss': avg_loss, 'log': tensorboard_logs}
 
 '''
@@ -317,14 +317,3 @@ class MNIST_M_Densenet_BC(MNIST_M_LIGHTNING):
     def __init__(self):
         super(MNIST_M_Densenet_BC,self).__init__()
         self.model = DenseNet_BC(num_classes=10)
-
-
-class SVHN_Densenet_BC(MNIST_LIGHTNING):
-    def __init__(self):
-        super(SVHN_Densenet_BC,self).__init__()
-        self.model = DenseNet_BC(num_classes=10)
-
-    def configure_optimizers(self):
-        optimizer = optim.SGD(self.parameters(), lr=1e-1, momentum=0.9, weight_decay=5e-4)
-        lr_scheduler = {'scheduler': torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[10,20], gamma=0.1), 'interval': 'epoch'}
-        return [optimizer], [lr_scheduler]

@@ -174,7 +174,7 @@ class MNIST_MDataModule(pl.LightningDataModule):
     def setup(self, stage=None):
         self.mnistm_train = MNISTM(root='./workspace/datasets/MNISTM', train=True, transform=self.transform, download=True)
         self.mnistm_test = MNISTM(root='./workspace/datasets/MNISTM', train =False,transform=self.transform, download=True)
-        return self.mnistm_train,self.mnistm_test
+        
     def train_dataloader(self):
         return DataLoader(self.mnistm_train, batch_size=self.batch_size, shuffle=True, num_workers=8)
 

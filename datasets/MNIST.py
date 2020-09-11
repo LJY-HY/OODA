@@ -22,8 +22,7 @@ class MNISTDataModule(pl.LightningDataModule):
     def setup(self, stage=None):
         self.mnist_test = datasets.MNIST(root='./workspace/datasets/MNIST',train=False,download=True, transform=self.transform)
         self.mnist_train = datasets.MNIST(root='./workspace/datasets/MNIST',train=True,download=True, transform=self.transform)
-        return self.mnist_train,self.mnist_test
-
+        
     def train_dataloader(self):
         mnist_train = DataLoader(self.mnist_train, batch_size=self.batch_size, shuffle=True, num_workers=8)
         return mnist_train

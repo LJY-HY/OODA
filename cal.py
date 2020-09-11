@@ -24,7 +24,7 @@ from datasets.Imagenet import *
 from utils.args import *
 import calMetric
 
-from ood_method.distribution_detector import DISTRIBUTION_DETECTOR
+from OOD_method.odin import ODIN
 start = time.time()
 
 def test(args):
@@ -77,10 +77,10 @@ def test(args):
         calMetric.metric(model_name,out_dataset)
     else:
         # setting in-dist detector
-        detector = DISTRIBUTION_DETECTOR(model,criterion,CUDA_DEVICE,magnitude,temperature,f1,g1)
+        detector = ODIN(model,criterion,CUDA_DEVICE,magnitude,temperature,f1,g1)
         trainer.fit(detector,datamodule=in_dm)      
         # setting out-dist detector
-        detector = DISTRIBUTION_DETECTOR(model,criterion,CUDA_DEVICE,magnitude,temperature,f2,g2)
+        detector = ODIN(model,criterion,CUDA_DEVICE,magnitude,temperature,f2,g2)
         trainer.fit(detector,datamodule=out_dm)
         # calculate metrics
         calMetric.metric(in_dataset,out_dataset,NNModels)

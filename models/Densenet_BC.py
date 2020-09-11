@@ -17,7 +17,7 @@ class BasicBlock(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.conv1 = nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=1,
                                padding=1, bias=False)
-        self.droprate = dropRateP
+        self.droprate = dropRate
     def forward(self, x):
         out = self.conv1(self.relu(self.bn1(x)))
         if self.droprate > 0:
@@ -121,8 +121,8 @@ class DenseNet3(nn.Module):
         out = self.relu(self.bn1(out))
         out = F.avg_pool2d(out, 8)
         out = out.view(-1, self.in_planes)
-        # TODO : check the shape of out is (1,*)
-        return self.fc(out)
+        out = self.fc(out)
+        return out
 
 def DenseNet_BC(**kwargs):
     model = DenseNet3(depth=100, growth_rate=12, reduction=0.5, bottleneck=True, dropRate=0.0, **kwargs)

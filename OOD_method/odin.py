@@ -25,9 +25,9 @@ LIGHTNING MODULE SKELETON
     7)temperature
 '''
 
-class DISTRIBUTION_DETECTOR(pl.LightningModule):
+class ODIN(pl.LightningModule):
     def __init__(self,model,criterion,CUDA_DEVICE=0,magnitude=0.0012,temperature=1000,fp1=None,fp2=None):
-        super(DISTRIBUTION_DETECTOR, self).__init__()
+        super(ODIN, self).__init__()
         self.model = model.cuda(CUDA_DEVICE)
         self.criterion = criterion
         self.CUDA_DEVICE = CUDA_DEVICE
