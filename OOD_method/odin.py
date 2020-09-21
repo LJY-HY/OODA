@@ -47,6 +47,8 @@ class ODIN(pl.LightningModule):
         inputs = Variable(images.cuda(self.CUDA_DEVICE), requires_grad = True)
         del images
         outputs= self.forward(inputs)
+        if len(outputs)==2:
+            outputs=outputs[0]
         # Calculating the confidence of the output, no perturbation added here, no temperature scaling used
         nnOutputs = outputs.data.cpu()
         nnOutputs = nnOutputs.numpy()
@@ -54,7 +56,7 @@ class ODIN(pl.LightningModule):
         nnOutputs = np.exp(nnOutputs).transpose()/np.sum(np.exp(nnOutputs),axis=1)
         nnOutputs = nnOutputs.transpose()
         for maxvalues in np.max(nnOutputs,axis=1):
-            self.fp1.write("{}, {}, {}\n".format(self.temperature, self.noiseMagnitude, maxvalues))
+            self.fp1.write("{}\n".format(maxvalues))
         
         # Using temperature scaling
         outputs = outputs / self.temperature
@@ -75,6 +77,8 @@ class ODIN(pl.LightningModule):
         # Adding small perturbations to images
         tempInputs = torch.add(inputs.data,  -self.noiseMagnitude, gradient)
         outputs = self.model(Variable(tempInputs))
+        if len(outputs)==2:
+            outputs = outputs[0]
         outputs = outputs / self.temperature
         # Calculating the confidence after adding perturbations
         nnOutputs = outputs.data.cpu()
@@ -83,7 +87,7 @@ class ODIN(pl.LightningModule):
         nnOutputs = np.exp(nnOutputs).transpose()/np.sum(np.exp(nnOutputs),axis=1)
         nnOutputs = nnOutputs.transpose()
         for maxvalues in np.max(nnOutputs,axis=1):
-            self.fp2.write("{}, {}, {}\n".format(self.temperature, self.noiseMagnitude, maxvalues))
+            self.fp2.write("{}\n".format(maxvalues))
 
         tensorboard_logs = {'train_loss':loss}
         return {'loss':loss, 'log':tensorboard_logs}
@@ -94,28 +98,14 @@ class ODIN(pl.LightningModule):
         lr_scheduler = {'scheduler': torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[20,40], gamma=0.1), 'interval': 'epoch'}
         return [optimizer], [lr_scheduler]
 
-    def validation_step(self,batch,batch_idx):
-        data, target = batch
-        output = self.forward(data)
-        loss = F.cross_entropy(output, target)
-        pred = output.argmax(dim=1,keepdim=True)
-        correct = pred.eq(target.view_as(pred)).sum().item()
-        return {'val_loss':loss,'correct':correct, 'batch_size':target.shape[0]}
-
-    def validation_epoch_end(self,outputs):
-        avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
-        sum_correct = sum([x['correct'] for x in outputs])
-        dataset_size = sum([x['batch_size'] for x in outputs])
-        tensorboard_logs = {'val_loss':avg_loss}
-        print('Validation accuracy : ',sum_correct/dataset_size,'\n\n') # self.arg.validation_size
-        return {'avg_val_loss':avg_loss, 'log':tensorboard_logs}    
-
     def test_step(self,batch,batch_idx):
         data, target = batch
-        output = self.forward(data)
-        pred = output.argmax(dim=1,keepdim=True)
+        outputs = self.forward(data)
+        if len(outputs)==2:
+            outouts = outputs[0]
+        pred = outputs.argmax(dim=1,keepdim=True)
         correct = pred.eq(target.view_as(pred)).sum().item()
-        return {'test_loss':F.cross_entropy(output,target), 'correct':correct,'batch_size':target.shape[0]}
+        return {'test_loss':F.cross_entropy(outputs,target), 'correct':correct,'batch_size':target.shape[0]}
 
     def test_epoch_end(self, outputs):
         avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
@@ -132,6 +122,3 @@ class ODIN(pl.LightningModule):
                         second_order_closure=None, on_tpu=False,
                         using_native_amp=False,using_lbfgs=False):
         pass
-
-
-# TODO : sum_correct has to be divided by size of test_dataset

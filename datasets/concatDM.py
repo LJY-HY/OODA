@@ -1,10 +1,11 @@
 import torch
-from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
+import pytorch_lightning as pl
+from torch.utils.data import DataLoader
 from torch.utils.data import random_split
 from torchvision import datasets
 
-import pytorch_lightning as pl
+
 
 class ConcatDataset(torch.utils.data.Dataset):
     def __init__(self, *datasets):

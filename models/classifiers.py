@@ -94,6 +94,29 @@ class SVHN_Densenet_BC(SVHN_LIGHTNING):
         super(SVHN_Densenet_BC,self).__init__()
         self.model = DenseNet_BC(num_classes=10)
 
+class SVHN_plain(SVHN_LIGHTNING):
+    def __init__(self):
+        super(SVHN_plain,self).__init__()
+        self.model.feature = nn.Sequential()
+        self.model.feature.add_module('f_conv1', nn.Conv2d(3, 64, kernel_size=5))
+        self.model.feature.add_module('f_bn1', nn.BatchNorm2d(64))
+        self.model.feature.add_module('f_pool1', nn.MaxPool2d(2))
+        self.model.feature.add_module('f_relu1', nn.ReLU(True))
+        self.model.feature.add_module('f_conv2', nn.Conv2d(64, 50, kernel_size=5))
+        self.model.feature.add_module('f_bn2', nn.BatchNorm2d(50))
+        self.model.feature.add_module('f_drop1', nn.Dropout2d())
+        self.model.feature.add_module('f_pool2', nn.MaxPool2d(2))
+        self.model.feature.add_module('f_relu2', nn.ReLU(True))
+
+class SVHN_VGG(SVHN_LIGHTNING):
+    # This Module is based on VGG-16 for dataset CIFAR10
+    def __init__(self):
+        super(SVHN_VGG, self).__init__()
+        self.model = VGG.vgg16_bn()
+        self.model.avgpool = nn.AdaptiveAvgPool2d((1,1))
+        self.model.classifier = nn.Sequential(
+            nn.Linear(512,10)
+        )
 
 '''
 CIFAR10 trained model skeleton
@@ -220,6 +243,20 @@ class MNIST_LIGHTNING(LIGHTNING_Model):
         optimizer = optim.SGD(self.parameters(), lr=1e-1, momentum=0.9, weight_decay=5e-4)
         lr_scheduler = {'scheduler': torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[20,40], gamma=0.1), 'interval': 'epoch'}
         return [optimizer], [lr_scheduler]
+
+class MNIST_plain(MNIST_LIGHTNING):
+    def __init__(self):
+        super(MNIST_plain,self).__init__()
+        self.model.feature = nn.Sequential()
+        self.model.feature.add_module('f_conv1', nn.Conv2d(3, 64, kernel_size=5))
+        self.model.feature.add_module('f_bn1', nn.BatchNorm2d(64))
+        self.model.feature.add_module('f_pool1', nn.MaxPool2d(2))
+        self.model.feature.add_module('f_relu1', nn.ReLU(True))
+        self.model.feature.add_module('f_conv2', nn.Conv2d(64, 50, kernel_size=5))
+        self.model.feature.add_module('f_bn2', nn.BatchNorm2d(50))
+        self.model.feature.add_module('f_drop1', nn.Dropout2d())
+        self.model.feature.add_module('f_pool2', nn.MaxPool2d(2))
+        self.model.feature.add_module('f_relu2', nn.ReLU(True))
 
 class MNIST_VGG(MNIST_LIGHTNING):
     # This Module is based on VGG-16 for dataset MNIST

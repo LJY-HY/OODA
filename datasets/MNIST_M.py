@@ -5,11 +5,11 @@ import os
 import torch.utils.data as data
 from PIL import Image
 import torch
-from torch.utils.data import DataLoader
-import torchvision.transforms as transforms
-from torchvision import datasets
-
 import pytorch_lightning as pl
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+from torch.utils.data import random_split
+from torchvision import datasets
 
 class MNISTM(data.Dataset):
     """`MNIST-M Dataset."""
@@ -159,10 +159,12 @@ class MNISTM(data.Dataset):
 
 
 class MNIST_MDataModule(pl.LightningDataModule):
-    def __init__(self,batch_size=64):
+    def __init__(self,TUNING=False,Training=True,batch_size=64):
         super().__init__()
-        self.mean = 0.1307
-        self.std = 0.3081
+        self.mean = 0.5
+        self.std = 0.5
+        self.TUNING=TUNING
+        self.Training = Training
         self.transform = transforms.Compose([transforms.Pad(padding=2,padding_mode='edge'),
                                             transforms.ToTensor(),
                                             transforms.Normalize(self.mean, self.std)])
@@ -174,7 +176,15 @@ class MNIST_MDataModule(pl.LightningDataModule):
     def setup(self, stage=None):
         self.mnistm_train = MNISTM(root='./workspace/datasets/MNISTM', train=True, transform=self.transform, download=True)
         self.mnistm_test = MNISTM(root='./workspace/datasets/MNISTM', train =False,transform=self.transform, download=True)
-        
+        if self.Training==False:
+            tuning_set, test_set = random_split(self.mnistm_test,[1000,9000])
+            if self.TUNING:
+                self.mnistm_train = tuning_set
+                self.mnistm_test = test_set
+            else:
+                self.mnistm_train = test_set
+                self.mnistm_test = MNISTM(root='./workspace/datasets/MNISTM', train =False,transform=self.transform, download=True)
+
     def train_dataloader(self):
         return DataLoader(self.mnistm_train, batch_size=self.batch_size, shuffle=True, num_workers=8)
 
