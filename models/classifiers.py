@@ -109,7 +109,7 @@ class SVHN_plain(SVHN_LIGHTNING):
         self.model.feature.add_module('f_relu2', nn.ReLU(True))
 
 class SVHN_VGG(SVHN_LIGHTNING):
-    # This Module is based on VGG-16 for dataset CIFAR10
+    # This Module is based on VGG-16 for dataset SVHN
     def __init__(self):
         super(SVHN_VGG, self).__init__()
         self.model = VGG.vgg16_bn()
@@ -117,6 +117,41 @@ class SVHN_VGG(SVHN_LIGHTNING):
         self.model.classifier = nn.Sequential(
             nn.Linear(512,10)
         )
+
+class SVHN_Resnet(SVHN_LIGHTNING):
+    # This Module is based on Resnet-50 for dataset SVHN
+    def __init__(self):
+        super(SVHN_Resnet, self).__init__()
+        self.model = Resnet.ResNet(Resnet.Bottleneck,[3,4,6,3],num_classes=10)
+        self.model.inplanes=64
+        self.model.conv1 = nn.Conv2d(3,64,kernel_size=3,stride=1,padding=1,bias=False)
+        self.model.bn1 = nn.BatchNorm2d(64)
+        self.model.linear = nn.Linear(512*Resnet.Bottleneck.expansion, 10)
+        del self.model.maxpool
+        self.model.maxpool = lambda x : x
+        self.model.avgpool = nn.AdaptiveAvgPool2d(output_size=(1,1))
+        self.model.features = nn.Sequential(
+                                self.model.conv1,
+                                self.model.bn1,
+                                self.model.relu,
+                                self.model.layer1,
+                                self.model.layer2,
+                                self.model.layer3,
+                                self.model.layer4,
+                                self.model.avgpool
+        )
+        
+
+    def _forward_impl(self, x):
+        # See note [TorchScript super()]
+        x = self.model.features(x)
+        x = torch.flatten(x, 1)
+        x = self.model.linear(x)
+
+        return x
+
+    def forward(self, x):
+        return self._forward_impl(x)
 
 '''
 CIFAR10 trained model skeleton
