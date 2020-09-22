@@ -22,6 +22,7 @@ from datasets.MNIST_M import *
 from datasets.MNIST import *
 from datasets.Imagenet import *
 from utils.args import *
+from histogram import *
 import calMetric
 
 from OOD_method.odin import ODIN
@@ -74,6 +75,10 @@ def test(args):
     ##### Softmax Scores Path Setting #####
     path = './workspace/softmax_scores/'
     os.makedirs(path,exist_ok=True)
+
+    ##### distribution saver path Setting #####
+    result_path = './OOD_method/distribution_result/'+args.train_mode+'/'
+    os.makedirs(result_path,exist_ok=True)
 
     T_candidate = [1,10,100,1000]
     e_candidate = [0,0.0005,0.001,0.0014,0.002,0.0024,0.005,0.01,0.05,0.1,0.2]
@@ -136,12 +141,14 @@ def test(args):
         trainer.fit(detector,datamodule=in_dm)
         detector = ODIN(model, criterion, CUDA_DEVICE, ep_temp, T_temp, f2, g2)
         trainer.fit(detector,datamodule=out_dm)
-        results=calMetric.metric(path)
+        results_best=calMetric.metric(path)
         f1.close()
         f2.close()
         g1.close()
         g2.close()
-   
+    
+    save_histogram(path,result_path)
+
     print('\nBest Performance Out-of-Distribution Detection')
     print('T       : ',T_temp)
     print('epsilon : ',ep_temp)
