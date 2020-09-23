@@ -16,7 +16,7 @@ class DANN(pl.LightningModule):
     def __init__(self,trash,model,train_mode):
         super(DANN, self).__init__()
         self.features=model.model.features
-        self.class_classifier = nn.Sequential(nn.Linear(2048, 100),
+        self.class_classifier = nn.Sequential(nn.Linear(512, 100),
                                                   nn.BatchNorm1d(100),
                                                   nn.ReLU(True),
                                                   nn.Dropout2d(),
@@ -26,7 +26,7 @@ class DANN(pl.LightningModule):
                                                   nn.Linear(100, 10),
                                                   nn.LogSoftmax()  )
 
-        self.domain_classifier = nn.Sequential(nn.Linear(2048, 100),
+        self.domain_classifier = nn.Sequential(nn.Linear(512, 100),
                                                    nn.BatchNorm1d(100),
                                                    nn.ReLU(True),
                                                    nn.Linear(100, 2),
@@ -35,7 +35,7 @@ class DANN(pl.LightningModule):
     def forward(self, x, alpha=0):
         # Resnet-50 version
         output = self.features(x)
-        output = output.view(-1,2048)               
+        output = output.view(-1,512)               
         reverse_feature = ReverseLayerF.apply(output,alpha)
         class_output = self.class_classifier(output)
         domain_output = self.domain_classifier(reverse_feature)

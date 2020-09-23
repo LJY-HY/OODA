@@ -12,16 +12,18 @@ import torchvision.transforms as transforms
 import numpy as np
 import time
 from scipy import misc
-import cal 
+from OOD_method.ODIN.odin import * 
 
 parser = argparse.ArgumentParser(description='Pytorch Detecting Out-of-distribution examples in neural networks')
 
-parser.add_argument('--in_dataset', default='CIFAR10',type=str, choices=['LSUN','LSUN_resize','Imagenet','Uniform','Gaussian','SVHN','MNIST','MNIST_M','CIFAR10','CIFAR100'],
+parser.add_argument('--in_dataset', default='SVHN',type=str, choices=['LSUN','LSUN_resize','Imagenet','Uniform','Gaussian','SVHN','MNIST','MNIST_M','CIFAR10','CIFAR100'],
                     help='in-distribution dataset')
-parser.add_argument('--out_dataset', default='LSUN', type=str, choices=['LSUN','LSUN_resize','Imagenet','Uniform','Gaussian','SVHN','MNIST','MNIST_M','CIFAR10','CIFAR100'],
+parser.add_argument('--out_dataset', default='CIFAR10', type=str, choices=['LSUN','LSUN_resize','Imagenet','Uniform','Gaussian','SVHN','MNIST','MNIST_M','CIFAR10','CIFAR100'],
                     help='out-of-distribution dataset')
-parser.add_argument('--target_dataset', default='MNIST', type=str, choices=['LSUN','LSUN_resize','Imagenet','Uniform','Gaussian','SVHN','MNIST','MNIST_M','CIFAR10','CIFAR100'],
+parser.add_argument('--target_dataset', default='MNIST', type=str, choices=['','LSUN','LSUN_resize','Imagenet','Uniform','Gaussian','SVHN','MNIST','MNIST_M','CIFAR10','CIFAR100'],
                     help='target dataset')
+parser.add_argument('--in_num', default=1, type=int,
+                    help='number of dataset in in-distribution')
 parser.add_argument('--nn', default="VGG", type=str,
                     choices=['VGG','Resnet','WideResnet','Densenet','Densenet_BC'], help='neural network name and training set')
 parser.add_argument('--train_mode', default='DA',type=str, choices=['SO','CC','DA','TO'],
@@ -41,6 +43,6 @@ parser.set_defaults(argument=True)
 def main():
     global args
     args = parser.parse_args()
-    cal.test(args)
+    odin(args)
 if __name__ == '__main__':
     main()
