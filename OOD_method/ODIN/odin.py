@@ -27,7 +27,7 @@ from datasets.MNIST import *
 from datasets.Imagenet import *
 from datasets.SVHN_MNIST import *
 from utils.args import *
-from histogram import *
+from utils.histogram import *
 import calMetric
 
 from DA_method.DANN import *
@@ -208,7 +208,6 @@ class ODIN(pl.LightningModule):
         
         # Using temperature scaling
         outputs = outputs / self.temperature
-
         # Calculating the perturbation we need to add, that is,
         # the sign of gradient of cross entropy loss w.r.t. input
         maxIndexTemp = np.argmax(nnOutputs,axis=1)

@@ -57,8 +57,8 @@ def main():
     
     os.makedirs(modelpath, exist_ok=True)
     checkpoint_callback=ModelCheckpoint(filepath=modelpath+adapted_model_name)
-    trainer=Trainer(checkpoint_callback=checkpoint_callback, gpus=[1], num_nodes=1, max_epochs = 100)
-
+    trainer=Trainer(checkpoint_callback=checkpoint_callback, gpus=[1], num_nodes=1, max_epochs = 150)
+    import pdb;pdb.set_trace()
     if os.path.isfile(modelpath + adapted_model_name):
         # if model trained under args.train_mode exists,
         # load from checkpoint

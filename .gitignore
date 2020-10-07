@@ -3,3 +3,4 @@ lightning_logs/
 *.pyc
 data/
 softmax_scores/
+OOD_method/distribution_result
